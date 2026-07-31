@@ -34,9 +34,18 @@ object ShakespeareSpark420 extends App {
   println(s"number of unique speakers : $uniqueSpeakers")
 
   val uniqueWords = shakespeareText.select(explode(split($"text_entry", " "))).distinct().count()
-
   println(s"number of unique words : $uniqueWords")
 
-  scala.io.StdIn.readLine()
+  println("DataFlint UI ready at: http://localhost:10000/dataflint/")
+  println("Press Enter to stop...")
+
+  // Interactive: wait for Enter. Non-interactive: optional keep-alive for smoke tests.
+  if (System.console() != null) {
+    scala.io.StdIn.readLine()
+  } else {
+    sys.env.get("DATAFLINT_KEEP_UI_SECONDS").foreach { secs =>
+      Thread.sleep(secs.toLong * 1000)
+    }
+  }
   spark.stop()
 }
